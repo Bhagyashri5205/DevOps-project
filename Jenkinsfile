@@ -17,13 +17,10 @@ pipeline {
     steps {
         dir('terraform') {
             sh '''
-                echo "Listing files inside terraform directory:"
-                ls -la
-
                 docker run --rm \
-                -v $(pwd):/project \
-                aquasec/trivy:latest \
-                config --scanners misconfig /project
+                  -v $(pwd):/project \
+                  aquasec/trivy:latest \
+                  config --exit-code 1 --severity HIGH,CRITICAL /project
             '''
         }
     }

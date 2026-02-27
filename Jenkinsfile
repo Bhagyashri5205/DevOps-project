@@ -17,9 +17,10 @@ pipeline {
     steps {
         sh '''
             docker run --rm \
-              -v $(pwd)/terraform:/project \
+              -v $PWD:/workspace \
+              -w /workspace/terraform \
               aquasec/trivy:latest \
-              config --misconfig-scanners terraform /project
+              config --misconfig-scanners terraform .
         '''
     }
 }
@@ -33,14 +34,17 @@ pipeline {
 
 
         stage('Terraform Plan') {
-    environment {
-        AWS_ACCESS_KEY_ID = credentials('aws-access-key')
-        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key')
-        AWS_DEFAULT_REGION = 'ap-south-1'
-    }
     steps {
-        dir('terraform') {
-            sh 'terraform plan -var=my_ip=0.0.0.0/0'
+        withCredentials([
+            string(credentialsId: 'aws-access-key', variable: 'AWS_ACCESS_KEY_ID'),
+            string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
+        ]) {
+            dir('terraform') {
+                sh '''
+                    export AWS_DEFAULT_REGION=ap-south-1
+                    terraform plan -var=my_ip=0.0.0.0/0
+                '''
+            }
         }
     }
 }

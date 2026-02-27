@@ -13,8 +13,13 @@ pipeline {
             }
         }
 
+        stage('Debug Files') {
+          steps {
+         sh 'ls -R'
+         }
+         }
       stage('Terraform Security Scan (Trivy)') {
-    steps {
+     steps {
         sh '''
             docker run --rm \
               -v $PWD:/workspace \

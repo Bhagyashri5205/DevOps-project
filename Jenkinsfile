@@ -1,12 +1,15 @@
 pipeline {
     agent any
 
+    options {
+        skipDefaultCheckout(true)
+    }
+
     stages {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'main',
-                url: 'https://github.com/Bhagyashri5205/DevOps-project.git'
+                checkout scm
             }
         }
 
@@ -14,22 +17,26 @@ pipeline {
             steps {
                 sh '''
                 docker run --rm \
-                -v $(pwd):/project \
-                aquasec/trivy config /project/terraform
-                '''
+                    -v $(pwd):/project \
+                aquasec/trivy config /project                '''
             }
         }
 
         stage('Terraform Init') {
-            steps {
-                sh 'terraform init'
-            }
+          steps {
+          dir('terraform') {
+            sh 'terraform init'
+         }
+          }
         }
 
+
         stage('Terraform Plan') {
-            steps {
-                sh 'terraform plan'
-            }
+           steps {
+           dir('terraform') {
+            sh 'terraform plan'
+          }
+         }
         }
 
         stage('Build Docker Image') {

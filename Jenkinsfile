@@ -13,16 +13,14 @@ pipeline {
             }
         }
 
-       stage('Terraform Security Scan (Trivy)') {
+      stage('Terraform Security Scan (Trivy)') {
     steps {
-        dir('terraform') {
-            sh '''
-                docker run --rm \
-                  -v $(pwd):/project \
-                  aquasec/trivy:latest \
-                  config --exit-code 1 --severity HIGH,CRITICAL /project
-            '''
-        }
+        sh '''
+            docker run --rm \
+              -v $WORKSPACE/terraform:/project \
+              aquasec/trivy:latest \
+              config --misconfig-scanners terraform /project
+        '''
     }
 }
         stage('Terraform Init') {

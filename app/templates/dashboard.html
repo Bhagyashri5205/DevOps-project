@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DevSecOps Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">    
+    <meta http-equiv="refresh" content="5"> 
+</head>
+<body>
+
+<div class="container">
+
+    <h1> DevSecOps Dashboard</h1>
+
+    <div class="info">
+        <p><b>Hostname:</b> {{ hostname }}</p>
+        <p><b>Current Time:</b> {{ current_time }}</p>
+        <p class="status">Status: Running inside Docker on Cloud</p>
+        <p><b>Environment:</b> {{ app_env }}</p>
+        <p><b>Version:</b> {{ app_version }}</p>
+    </div>
+
+<div class="card">
+  <h3>CPU Usage</h3>
+  <p id="cpu">{{ metrics.cpu_usage }}%</p>
+</div>
+
+<div class="card">
+  <h3>Memory Usage</h3>
+  <p id="memory">{{ metrics.memory_usage }}%</p>
+</div>
+
+<div class="card">
+  <h3>Disk Usage</h3>
+  <p id="disk">{{ metrics.disk_usage }}%</p>
+</div>
+
+</div>
+
+</body>
+</html>
+
+<script>
+async function fetchMetrics() {
+  try {
+    const response = await fetch("/metrics");
+    const data = await response.json();
+
+    document.getElementById("cpu").innerText = data.cpu_usage + "%";
+    document.getElementById("memory").innerText = data.memory_usage + "%";
+    document.getElementById("disk").innerText = data.disk_usage + "%";
+  } catch (error) {
+    console.error("Error fetching metrics:", error);
+  }
+}
+
+// Refresh every 3 seconds
+setInterval(fetchMetrics, 3000);
+</script>

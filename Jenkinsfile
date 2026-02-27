@@ -17,18 +17,18 @@ pipeline {
           steps {
          sh 'ls -R'
          }
+        }
+
+        stage('Terraform Security Scan (Trivy)') {
+         steps {
+          sh '''
+         docker run --rm \
+          -v $PWD/terraform:/project \
+          aquasec/trivy:latest \
+          config --misconfig-scanners terraform /project
+         '''
          }
-      stage('Terraform Security Scan (Trivy)') {
-     steps {
-        sh '''
-            docker run --rm \
-              -v $PWD:/workspace \
-              -w /workspace/terraform \
-              aquasec/trivy:latest \
-              config --misconfig-scanners terraform .
-        '''
-    }
-}
+        }
         stage('Terraform Init') {
           steps {
           dir('terraform') {

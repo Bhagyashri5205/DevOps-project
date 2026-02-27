@@ -1,0 +1,10 @@
+.git
+.gitignore
+terraform/
+*.tfstate
+*.tfstate.backup
+__pycache__/
+*.pyc
+venv/
+.env
+Jenkinsfile

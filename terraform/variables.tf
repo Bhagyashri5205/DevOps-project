@@ -1,11 +1,8 @@
-variable "aws_region" {
-  description = "AWS region for deployment"
-  type        = string
-  default     = "us-east-1"
+variable "region" {
+  default = "us-east-1"
 }
 
-variable "aws_profile" {
-  description = "AWS CLI profile to use"
+variable "my_ip" {
+  description = "My public IP for SSH access"
   type        = string
-  default     = "default"
 }

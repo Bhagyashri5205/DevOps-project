@@ -14,13 +14,16 @@ pipeline {
         }
 
         stage('Terraform Security Scan (Trivy)') {
-            steps {
-                sh '''
-                docker run --rm \
-                    -v $(pwd):/project \
-                aquasec/trivy config /project                '''
-            }
+    steps {
+        dir('terraform') {
+            sh '''
+            docker run --rm \
+              -v $(pwd):/project \
+              aquasec/trivy config /project
+            '''
         }
+    }
+}
 
         stage('Terraform Init') {
           steps {

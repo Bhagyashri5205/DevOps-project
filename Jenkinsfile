@@ -37,7 +37,7 @@ pipeline {
         stage('Terraform Plan') {
            steps {
            dir('terraform') {
-            sh 'terraform plan'
+            sh 'terraform plan -var="my_ip=0.0.0.0/0"'
           }
          }
         }

@@ -35,20 +35,21 @@ pipeline {
 
         stage('Terraform Plan') {
     steps {
-        withCredentials([
-            string(credentialsId: 'aws-access-key', variable: 'AWS_ACCESS_KEY_ID'),
-            string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
-        ]) {
+        withCredentials([[
+            $class: 'AmazonWebServicesCredentialsBinding',
+            credentialsId: 'aws-credentials'
+        ]]) {
             dir('terraform') {
                 sh '''
                     export AWS_DEFAULT_REGION=ap-south-1
-                    terraform plan -var=my_ip=0.0.0.0/0
+                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                    terraform plan -var="my_ip=0.0.0.0/0"
                 '''
             }
         }
     }
 }
-
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t devsecops-app .'
